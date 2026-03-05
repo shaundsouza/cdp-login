@@ -1,2 +1,3 @@
 # cdp-login
-Customer data platform login
+
+* [cdp-login.html](https://hal.science/hal-05528728/file/cdp-login.html)
