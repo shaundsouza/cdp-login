@@ -1,0 +1,269 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>OneCDP</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        div.warehouse3 {
+            position: absolute;
+            z-index: 1;
+            border: 1px solid blue;
+            padding: 20px;
+            cursor: pointer;
+            height: 90px;
+            width: 90px;
+        }
+
+        div.warehouse1 {
+            position: absolute;
+            z-index: 1;
+            padding: 10px;
+            border: none;
+        }
+
+        div.warehouse2 {
+            position: absolute;
+            z-index: 1;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+            padding: 0px;
+            border: none; 
+            border-left: 45px solid transparent;
+            border-right: 45px solid transparent;
+            border-bottom: 90px solid blue;
+        }
+
+        div.warehouse {
+            position: absolute;
+            z-index: 1;
+            border: 1px solid blue;
+            padding: 20px;
+            cursor: pointer;
+            height: 90px;
+            width: 90px;
+            border-radius: 50%;
+        }
+
+        div.top-row {
+            width: 100%;
+            padding: 10px;
+            background: #3C50A6;
+            border: 1px solid grey;
+        }
+
+        body {
+            background: #333C45;
+            color: white;
+            padding: 5px;
+            border: 3px solid red;
+            min-height: 99vh;
+        }
+
+        .grey {
+            opacity: 0.3;
+            color: lightgray
+        }
+
+        canvas {
+            background: #D5A496;
+            border: 1px solid grey;
+            margin: 10px;
+        }
+    </style>
+    <script>
+        cnt = 0;
+        $(document).ready(function () {
+            console.log('test');
+            $("#loading").hide();
+            $("#welcome").hide();
+            $('.alert').hide();
+
+            $("#image-canvas").toggleClass("grey");
+            $(".warehouse3").hide();
+            $(".top-row").hide();
+
+            $("#submit").click(function () {
+                console.log('enter');
+                pwd = $("#pwd-form").serializeArray();
+                console.log(pwd);
+
+                if (pwd[1]['value'] == '123456') {
+                    $("#login").remove();
+                    $('.alert').hide();
+
+                    $(".username1").html('<h4>' + pwd[0]['value'] + '</h4>');
+                    $("#welcome").show();
+                    $("#welcome").animate({ left: '-200px' }, 2000);
+
+                    setTimeout(function () {
+                        $("#image-canvas").toggleClass("grey");
+                        $(".top-row").show();
+                        $(".warehouse3").show();
+                        $("#welcome").remove();
+                        $("#loading").hide();
+
+                        update_limerick();
+                        update_chart();
+
+                        $("#vehicle1").animate({ right: $(window).width() - 240 }, 20000);
+                        $("#delivery1").animate({ left: '850px' }, 40000);
+                    }, 2000);
+                } else {
+                    $('.alert').show();
+                }
+                return false;
+            });
+
+            $(".warehouse3").click(function () {
+                $("#loading").show();
+
+                setTimeout(function () {
+                    $("#loading").hide();
+                    update_limerick();
+                    update_chart();
+                }, 1000);
+            });
+
+            $("#ml-model").click(function () {
+                $("#vehicle1").removeClass();
+                $("#delivery1").removeClass();
+                if ((cnt % 3) == 0) {
+                    $("#vehicle1").toggleClass("warehouse2");
+                    $("#delivery1").toggleClass("warehouse");
+                } else if ((cnt % 3) == 1) {
+                    $("#vehicle1").toggleClass("warehouse");
+                    $("#delivery1").toggleClass("warehouse");
+                } else {
+                    $("#vehicle1").toggleClass("warehouse3");
+                    $("#delivery1").toggleClass("warehouse3");
+                }
+                cnt += 1;
+            });
+        });
+
+        function update_limerick() {
+            var text = limericks[Math.floor(Math.random() * 5)];
+            console.log(text);
+            $("#limericks").text(text);
+        }
+
+        const limericks = [
+            "In the warehouse, the racks stand tall, Holding goods, one and all. With shelves in a row, And space to bestow, They organize, never to fall.",
+            "There once were some racks in a store, Where goods were arranged, floor to floor. With items in bins, And labels that spins, It's a system that workers adore.",
+            "In the warehouse, the racks do align, Holding inventory, oh so fine. With bins full of parts, And labels like arts, It's a sight that makes logistics shine.",
+            "On the racks in the warehouse, you'll find, All sorts of goods, of every kind. With shelves that are stacked, And orders packed, It's a storage solution, refined.",
+            "There once were some racks in a bay, Where goods were stored, come what may. With shelves that ascend, And space to extend, It's a system that saves the day."
+        ]
+
+        var myChart = null;
+        function update_chart() {
+            const ctx = document.getElementById('canvas');
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            const labels = [1, 2, 3, 4, 5];
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Dataset 1',
+                        data: labels.map(() => {
+                            return [Math.floor(Math.random() * 200) - 100];
+                        }),
+                        backgroundColor: 'rgba(255, 0, 0)',
+                    },
+                    {
+                        label: 'Dataset 2',
+                        data: labels.map(() => {
+                            return [Math.floor(Math.random() * 200) - 100];
+                        }),
+                        backgroundColor: 'rgba(0, 128, 0)',
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            min: -100,
+                            max: 100,
+                        }
+                    }
+                }
+            });
+        }      
+    </script>
+
+</head>
+
+<body>
+    <div>
+        <div class="container-fluid">
+            <div class="row w-100 top-row">
+                <div id="ml-model" class="col-sm-1 btn btn-primary">
+                    <img src="https://icons.getbootstrap.com/assets/icons/car-front-fill.svg" height="40" alt="cdp">
+                </div>
+
+                <div class="col-sm-5 text-right">
+                    <h3 style="margin:0;padding:10;">OneCDP&nbsp;&nbsp;</h3>
+                </div>
+
+                <div class="col-sm-5 text-right">
+                    <div class="username1"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="image-canvas" style="width:1000px;border:3px solid grey;">
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <div class="warehouse3" style="right:30; top:100;">
+            <h4>sto&Gamma;.ai</h4>
+        </div>
+
+        <div class="warehouse3" id="vehicle1" style="right: 50; bottom: 100;"><img
+                src="https://icons.getbootstrap.com/assets/icons/rocket.svg" height="50"></div>
+        <div class="warehouse3" id="delivery1" style="left:200; top: 300;"><img
+                src="https://icons.getbootstrap.com/assets/icons/cart-fill.svg" height="50"></div>
+
+        <div class="warehouse1" id="loading" style="left:40%;top:40%;">
+            <div class="spinner-border" style="width:5rem; height: 5rem; "></div>
+            <span style="font-size: 30px; font-weight:bold;">&nbsp; Loading...</span>
+        </div>
+
+        <div class="warehouse1" id="welcome" style="left:40%; top:40%;">
+            <div class="spinner-border" style="width:5rem; height: 5rem;"></div>
+            <div class="username1"></div>
+            <span style="font-size: 30px; font-weight:bold;">&nbsp;Welcome</span>
+        </div>
+
+        <div class="alert alert-warning" role="alert">
+            <span style="font-size: 30px; font-weight:bold;">&nbsp; Error!</span>
+        </div>
+
+        <div class="warehouse1" id="login" style="left:40%; top:40%;">
+            <form action="" id="pwd-form">
+                <div class="form-group">
+                    <label for="email">User:</label>
+                    <input type="email" class="form-control" id="email" name="email">
+                </div>
+                <div class="form-group">
+                    <label for="pwd">Password: </label>
+                    <input type="password" class="form-control" id="pwd" name="pwd">
+                </div>
+                <button type="submit" id="submit" class="btn btn-outline-light">Submit</button>
+            </form>
+        </div>
+
+        <div class="warehouse1" id="limericks" style="left:50;bottom:30;">
+        </div>
+</body>
+
+</html>
